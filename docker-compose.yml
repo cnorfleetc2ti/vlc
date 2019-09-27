@@ -1,0 +1,35 @@
+version: '2.1'
+
+# https://medium.com/@eyevinntechnology/using-ffmpeg-and-srt-to-transport-video-signal-to-the-cloud-7160960f846a
+
+services:
+# ffmpeg:
+#   container_name: ffmpeg
+#   image: jrottenberg/ffmpeg:alpine
+#   volumes: 
+#     - media:/media
+#   # https://trac.ffmpeg.org/wiki/StreamingGuide
+# # command: "-re -i /media/SampleVideo_1280x720_30mb.mp4 -c copy -f mpegts udp://ffplay:1234"
+#   command: "-r 25 -i /media/SampleVideo_1280x720_30mb.mp4 -vcodec libx264 -preset ultrafast -f flv rtmp://rtmp:1935/live/mystream.sdp"
+
+  rtmp:
+    container_name: rtmp
+    image: tiangolo/nginx-rtmp
+    ports: 
+      - 1935:1935
+  
+  vlc:
+    container_name: vlc
+    build: .
+    ports: 
+      - 8081:8081
+    volumes: 
+      - media:/media
+    command: "-vvv -I dummy /media/SampleVideo_1280x720_30mb.mp4 --loop --random --sout='#standard{access=http,mux=ts,dst=0.0.0.0:8081}'"
+
+volumes: 
+  media:
+    driver_opts:
+      type: none
+      o: bind
+      device: //C/Users/CNorfleet/Documents/Docker/ffmpeg/media

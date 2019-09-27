@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  ffmpeg:
+    image: static_ffmpeg
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - INPUT=/media/SampleVideo_1280x720_30mb.mp4
+        - FRAME_RATE=24
+        - OUTPUT=/media/output.avi
+    ports:
+      - 3000:3000
+    volumes: 
+      - media:/media
+
+#    command: "-i /media/SampleVideo_1280x720_30mb.mp4 -r 24 /media/output.avi"
+
+volumes: 
+  media:
+    driver_opts:
+      type: none
+      o: bind
+      device: //C/Users/CNorfleet/Documents/Docker/ffmpeg/media
